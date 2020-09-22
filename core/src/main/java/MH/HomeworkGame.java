@@ -1,7 +1,11 @@
 package MH;
 
-import com.badlogic.gdx.ApplicationAdapter;
-
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
-public class HomeworkGame extends ApplicationAdapter {
+public class HomeworkGame extends BaseGame {
+
+    @Override
+    public void create() {
+        super.create();
+        setActiveScreen( new MenuScreen());
+    }
 }
