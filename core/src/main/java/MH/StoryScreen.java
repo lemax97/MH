@@ -64,6 +64,19 @@ public class StoryScreen extends BaseScreen {
         kelsoe.addAction( SceneActions.moveToOutsideLeft(0) );
 
         scene.addSegment( new SceneSegment( background, Actions.fadeIn(1) ));
+        scene.addSegment( new SceneSegment( kelsoe, SceneActions.moveToScreenCenter(1) ));
+        scene.addSegment( new SceneSegment( dialogBox, Actions.show() ));
+
+        addTextSequence( "My name is Kelsoe Kismet. I am a student at Aureus Ludus Academy.");
+        addTextSequence( "I can be a little forgetful sometimes. Right now, I'm looking for my homework.");
+
+        scene.addSegment( new SceneSegment( dialogBox, Actions.hide() ));
+        scene.addSegment( new SceneSegment( kelsoe, SceneActions.moveToOutsideRight(1) ));
+        scene.addSegment( new SceneSegment( background, Actions.fadeOut(1) ));
+
+        scene.addSegment( new SceneSegment( background, Actions.run(() -> { classroom(); }) ));
+
+        scene.start();
     }
 
     public void classroom() {
