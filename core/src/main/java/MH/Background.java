@@ -9,6 +9,7 @@ public class Background extends BaseActor {
     public Animation classroom;
     public Animation scienceLab;
     public Animation library;
+    public Animation theGym;
 
     public Background(float x, float y, Stage s) {
 
@@ -17,6 +18,7 @@ public class Background extends BaseActor {
         classroom = loadTexture("assets/bg-classroom.jpg");
         scienceLab = loadTexture("assets/bg-science-lab.jpg");
         library = loadTexture("assets/bg-library.jpg");
+        theGym = loadTexture("assets/gym.png");
         setSize( 800, 600 );
     }
 }

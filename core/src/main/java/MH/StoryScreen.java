@@ -19,6 +19,7 @@ public class StoryScreen extends BaseScreen {
     BaseActor continueKey;
     Table buttonTable;
     BaseActor theEnd;
+    boolean key;
 
     @Override
     public void initialize() {
@@ -56,6 +57,8 @@ public class StoryScreen extends BaseScreen {
         theEnd.setScale(2);
         theEnd.setOpacity(0);
 
+        key = false;
+
         scene = new Scene();
         mainStage.addActor(scene);
         hallway();
@@ -79,6 +82,8 @@ public class StoryScreen extends BaseScreen {
         scene.addSegment( new SceneSegment( background, Actions.fadeOut(1) ));
 
         scene.addSegment( new SceneSegment( background, Actions.run(() -> { classroom(); }) ));
+
+
 
         scene.start();
     }
@@ -118,19 +123,21 @@ public class StoryScreen extends BaseScreen {
                 }
         );
 
-        TextButton libraryButton = new TextButton("Look in the Library", BaseGame.textButtonStyle);
-        libraryButton.addListener(
+
+
+        TextButton TheGymButton = new TextButton("Look in the Gym", BaseGame.textButtonStyle);
+        TheGymButton.addListener(
                 (Event e) -> {
 
                     if ( !(e instanceof InputEvent) ||
-                        !((InputEvent)e).getType().equals(Type.touchDown))
+                            !((InputEvent)e).getType().equals(Type.touchDown))
                         return false;
                     scene.addSegment( new SceneSegment( buttonTable, Actions.hide() ));
-                    addTextSequence( "That's a great idea. Maybe I left it in the library.");
+                    addTextSequence( "That's a great idea. Maybe I left it in the Gymnasium.");
                     scene.addSegment( new SceneSegment( dialogBox, Actions.hide() ));
                     scene.addSegment( new SceneSegment( kelsoe, SceneActions.moveToOutsideLeft(1) ));
                     scene.addSegment( new SceneSegment( background, Actions.fadeOut( 1) ));
-                    scene.addSegment( new SceneSegment( background, Actions.run(() -> {library();}) ));
+                    scene.addSegment( new SceneSegment( background, Actions.run(() -> {theGym();}) ));
 
                     return false;
                 }
@@ -139,9 +146,75 @@ public class StoryScreen extends BaseScreen {
         buttonTable.clearChildren();
         buttonTable.add(scienceLabButton);
         buttonTable.row();
-        buttonTable.add(libraryButton);
+        buttonTable.add(TheGymButton);
 
         scene.start();
+    }
+
+    public void theGym() {
+
+        scene.clearSegments();
+
+        background.setAnimation( background.theGym);
+        dialogBox.setText("");
+        kelsoe.addAction( SceneActions.moveToOutsideLeft(0));
+
+        scene.addSegment( new SceneSegment( background, Actions.fadeIn(1) ));
+        scene.addSegment( new SceneSegment( kelsoe, SceneActions.moveToScreenCenter(1) ));
+        scene.addSegment( new SceneSegment( dialogBox, Actions.show() ));
+
+        addTextSequence( "This is the Gymnasium.");
+        scene.addSegment( new SceneSegment( kelsoe, SceneActions.setAnimation( kelsoe.sad )));
+        addTextSequence( "My homework isn't here, though.");
+        scene.addSegment( new SceneSegment( kelsoe, SceneActions.setAnimation( kelsoe.normal )));
+        addTextSequence( "Now where should I go?");
+
+        scene.addSegment( new SceneSegment( buttonTable, Actions.show() ));
+
+        // set up options
+        TextButton classroomButton = new TextButton("Return to Classroom", BaseGame.textButtonStyle);
+        classroomButton.addListener(
+                (Event e) -> {
+                    if (!(e instanceof InputEvent) ||
+                            !((InputEvent)e).getType().equals(Type.touchDown))
+                        return false;
+
+                    scene.addSegment( new SceneSegment( buttonTable, Actions.hide() ));
+                    addTextSequence( "Maybe someone found it and put it in the classroom. I'll go check.");
+                    scene.addSegment( new SceneSegment( dialogBox, Actions.hide() ));
+                    scene.addSegment( new SceneSegment( kelsoe, SceneActions.moveToOutsideRight(1) ));
+                    scene.addSegment( new SceneSegment( background, Actions.fadeOut(1) ));
+                    scene.addSegment( new SceneSegment( background, Actions.run(() -> { classroom(); }) ));
+
+                    return false;
+                }
+        );
+
+        TextButton sciencelabButton = new TextButton("Look in the Science Lab...", BaseGame.textButtonStyle);
+        sciencelabButton.addListener(
+                (Event e) -> {
+
+                    if ( !(e instanceof InputEvent) ||
+                            !((InputEvent)e).getType().equals(Type.touchDown))
+                        return false;
+                    scene.addSegment( new SceneSegment( buttonTable, Actions.hide() ));
+                    addTextSequence( "That's a great idea. Maybe I left it in the Science Lab...");
+                    scene.addSegment( new SceneSegment( dialogBox, Actions.hide() ));
+                    scene.addSegment( new SceneSegment( kelsoe, SceneActions.moveToOutsideLeft(1) ));
+                    scene.addSegment( new SceneSegment( background, Actions.fadeOut( 1) ));
+                    scene.addSegment( new SceneSegment( background, Actions.run(() -> {scienceLab();}) ));
+
+                    return false;
+                }
+        );
+
+        buttonTable.clearChildren();
+        buttonTable.add(classroomButton);
+        buttonTable.row();
+        buttonTable.add(sciencelabButton);
+
+        scene.start();
+
     }
 
     public void scienceLab() {
@@ -183,28 +256,24 @@ public class StoryScreen extends BaseScreen {
                 }
         );
 
-        TextButton libraryButton = new TextButton("Look in the Library", BaseGame.textButtonStyle);
-        libraryButton.addListener(
+        TextButton PickUpButton = new TextButton("Pick up key...", BaseGame.textButtonStyle);
+        PickUpButton.addListener(
                 (Event e) -> {
 
                     if ( !(e instanceof InputEvent) ||
                             !((InputEvent)e).getType().equals(Type.touchDown))
                         return false;
                     scene.addSegment( new SceneSegment( buttonTable, Actions.hide() ));
-                    addTextSequence( "That's a great idea. Maybe I left it in the library.");
-                    scene.addSegment( new SceneSegment( dialogBox, Actions.hide() ));
-                    scene.addSegment( new SceneSegment( kelsoe, SceneActions.moveToOutsideLeft(1) ));
-                    scene.addSegment( new SceneSegment( background, Actions.fadeOut( 1) ));
-                    scene.addSegment( new SceneSegment( background, Actions.run(() -> {library();}) ));
-
-                    return false;
+                    addTextSequence( "Look! That's a key, may be I can use it later...");
+                    key = true;
+                   return false;
                 }
         );
 
         buttonTable.clearChildren();
         buttonTable.add(classroomButton);
         buttonTable.row();
-        buttonTable.add(libraryButton);
+        buttonTable.add(PickUpButton);
 
         scene.start();
     }
@@ -221,20 +290,69 @@ public class StoryScreen extends BaseScreen {
         scene.addSegment( new SceneSegment( dialogBox, Actions.show() ));
 
         addTextSequence( "This is the library.");
-        addTextSequence( "Let me check the table where I was working earlier...");
-        scene.addSegment( new SceneSegment( kelsoe, SceneActions.setAnimation( kelsoe.lookRight )));
-        scene.addSegment( new SceneSegment( kelsoe, SceneActions.moveToScreenRight(2) ));
-        scene.addSegment( new SceneSegment( kelsoe, SceneActions.setAnimation( kelsoe.normal ) ));
-        addTextSequence( "Aha! Here it is!" );
-        scene.addSegment( new SceneSegment( kelsoe, SceneActions.moveToScreenCenter(0.5f) ));
-        addTextSequence( "Thanks for helping me find it!" );
-        scene.addSegment( new SceneSegment( dialogBox, Actions.hide() ));
+        if (key) {
+            addTextSequence("Let me check the table where I was working earlier...");
+            scene.addSegment(new SceneSegment(kelsoe, SceneActions.setAnimation(kelsoe.lookRight)));
+            scene.addSegment(new SceneSegment(kelsoe, SceneActions.moveToScreenRight(2)));
+            scene.addSegment(new SceneSegment(kelsoe, SceneActions.setAnimation(kelsoe.normal)));
+            addTextSequence("Aha! Here it is!");
+            scene.addSegment(new SceneSegment(kelsoe, SceneActions.moveToScreenCenter(0.5f)));
+            addTextSequence("Thanks for helping me find it!");
+            scene.addSegment(new SceneSegment(dialogBox, Actions.hide()));
 
-        scene.addSegment( new SceneSegment( theEnd, Actions.fadeIn(4) ));
+            scene.addSegment(new SceneSegment(theEnd, Actions.fadeIn(4)));
 
-        scene.addSegment( new SceneSegment( background, Actions.delay(10) ));
-        scene.addSegment( new SceneSegment( background, Actions.run(
-                () -> { BaseGame.setActiveScreen(new MenuScreen()); }) ));
+            scene.addSegment(new SceneSegment(background, Actions.delay(10)));
+            scene.addSegment(new SceneSegment(background, Actions.run(
+                    () -> {
+                        BaseGame.setActiveScreen(new MenuScreen());
+                    })));
+        } else {
+            addTextSequence("Unfortunately this location is closed...");
+            scene.addSegment( new SceneSegment( kelsoe, SceneActions.setAnimation( kelsoe.sad )));
+            addTextSequence( "I can't get in to check if my homework here...");
+            scene.addSegment( new SceneSegment( kelsoe, SceneActions.setAnimation( kelsoe.normal )));
+            addTextSequence( "Now where should I go?");
+
+            scene.addSegment( new SceneSegment( buttonTable, Actions.show() ));
+
+            // set up options
+            TextButton classroomButton = new TextButton("Return to Classroom", BaseGame.textButtonStyle);
+            classroomButton.addListener(
+                    (Event e) -> {
+                        if (!(e instanceof InputEvent) ||
+                                !((InputEvent)e).getType().equals(Type.touchDown))
+                            return false;
+
+                        scene.addSegment( new SceneSegment( buttonTable, Actions.hide() ));
+                        addTextSequence( "Maybe someone found it and put it in the classroom. I'll go check.");
+                        scene.addSegment( new SceneSegment( dialogBox, Actions.hide() ));
+                        scene.addSegment( new SceneSegment( kelsoe, SceneActions.moveToOutsideRight(1) ));
+                        scene.addSegment( new SceneSegment( background, Actions.fadeOut(1) ));
+                        scene.addSegment( new SceneSegment( background, Actions.run(() -> { classroom(); }) ));
+
+                        return false;
+                    }
+            );
+
+            TextButton sciencelabButton = new TextButton("Look in the Science Lab...", BaseGame.textButtonStyle);
+            sciencelabButton.addListener(
+                    (Event e) -> {
+
+                        if ( !(e instanceof InputEvent) ||
+                                !((InputEvent)e).getType().equals(Type.touchDown))
+                            return false;
+                        scene.addSegment( new SceneSegment( buttonTable, Actions.hide() ));
+                        addTextSequence( "That's a great idea. Maybe I left it in the Science Lab...");
+                        scene.addSegment( new SceneSegment( dialogBox, Actions.hide() ));
+                        scene.addSegment( new SceneSegment( kelsoe, SceneActions.moveToOutsideLeft(1) ));
+                        scene.addSegment( new SceneSegment( background, Actions.fadeOut( 1) ));
+                        scene.addSegment( new SceneSegment( background, Actions.run(() -> {scienceLab();}) ));
+
+                        return false;
+                    }
+            );
+        }
 
         scene.start();
     }
